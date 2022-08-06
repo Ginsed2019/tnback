@@ -19,10 +19,15 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use(function setCommonHeaders(req, res, next) {
-    res.set("Access-Control-Allow-Private-Network", "true");
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Private-Network", "true");
     next();
-  });
+});
+
+// app.use(function setCommonHeaders(req, res, next) {
+//     res.set("Access-Control-Allow-Private-Network", "true");
+//     next();
+// });
 
 app.use(express.json());
 
