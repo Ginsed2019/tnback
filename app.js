@@ -51,6 +51,40 @@ app.get("/activities", async(rec, res) => {
     })
 })
 
+app.get("/activities2", async(rec, res) => {
+    const sql = `
+    SELECT a1.*, SUM(a2.participants) AS current FROM activities2 AS a1
+LEFT JOIN participants as a2 ON a1.id = a2.activityID
+GROUP BY a1.id
+    `
+    db.all(sql, (err, rows) => {
+        if(err) {
+            res.status(400).json(err.message);
+            return;
+        }
+        console.log(rows)
+        res.status(200).send(rows);
+    })
+})
+
+app.post("/register", async(rec, res) => {
+    try {
+    const time = Date.now()
+    const sql = `
+    INSERT INTO participants (time, name, surname, school, contactInfo, activityID, participants)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    `
+    for (let index = 0; index < rec.body.activities.length; index++) {
+        const e = rec.body.activities[index];
+        await db.run(sql, [time, rec.body.name, rec.body.surname, rec.body.school, rec.body.contactInfo, e.id, e.participants])
+    }
+    res.status(201).send("CREATED");
+    } catch(error) {
+        console.group(error)
+        res.status(400).send(error);
+    }
+})
+
 app.listen(process.env.PORT || 5001, () => {
     console.log("Server started");
 });
