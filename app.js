@@ -15,8 +15,14 @@ app.use(function (req, res, next) {
       "Origin, X-Requested-With, Content-Type, Accept"
     );
     res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+
     next();
 });
+
+app.use(function setCommonHeaders(req, res, next) {
+    res.set("Access-Control-Allow-Private-Network", "true");
+    next();
+  });
 
 app.use(express.json());
 
